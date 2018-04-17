@@ -6,7 +6,6 @@ var express = require("express"),
     expressSanitizer = require("express-sanitizer");
 
 // APP CONFIG
-// mongoose.connect("mongodb://localhost/restful_blog_app");
 var url = process.env.DATABASEURL || "mongodb://localhost/restful_blog_app";
 mongoose.connect(url);
 app.set("view engine", "ejs");
@@ -30,7 +29,7 @@ app.get("/", function(req, res) {
     res.redirect("/blogs");
 });
 
-// index
+// INDEX ROUTE
 app.get("/blogs", function(req, res) {
     Blog.find({}, function(err, blogs) {
         if (err) {
@@ -41,25 +40,27 @@ app.get("/blogs", function(req, res) {
     });
 });
 
-// new
+// NEW ROUTE
 app.get("/blogs/new", function(req, res) {
     res.render("new");
 });
 
-// create
+// CREATE ROUTE
 app.post("/blogs", function(req, res) {
+    // create blog
     req.body.blog.body = req.sanitize(req.body.blog.body);
     
     Blog.create(req.body.blog, function(err, blog) {
         if (err) {
             res.render("new");
         } else {
+            //then, redirect to the index
             res.redirect("/blogs");
         }
     });
 });
 
-// show
+// SHOW ROUTE
 app.get("/blogs/:id", function(req, res) {
     Blog.findById(req.params.id, function(err, foundBlog) {
         if (err) {
@@ -70,7 +71,7 @@ app.get("/blogs/:id", function(req, res) {
     });
 });
 
-// edit
+// EDIT ROUTE
 app.get("/blogs/:id/edit", function(req, res) {
     Blog.findById(req.params.id, function(err, foundBlog) {
         if (err) {
@@ -81,7 +82,7 @@ app.get("/blogs/:id/edit", function(req, res) {
     });
 });
 
-// update
+// UPDATE ROUTE
 app.put("/blogs/:id", function(req, res) {
     req.body.blog.body = req.sanitize(req.body.blog.body);
     
@@ -94,8 +95,9 @@ app.put("/blogs/:id", function(req, res) {
     });
 });
 
-// destroy
+// DELETE ROUTE
 app.delete("/blogs/:id", function(req, res) {
+    //destroy blog
     Blog.findByIdAndRemove(req.params.id, function(err) {
         if (err) {
             res.redirect("/blogs");
