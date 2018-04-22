@@ -46,7 +46,7 @@ app.get("/blogs/new", function(req, res) {
 });
 
 // CREATE ROUTE
-app.post("/blogs", function(req, res) {
+app.post("/blogs", isSafe, function(req, res) {
     // create blog
     req.body.blog.body = req.sanitize(req.body.blog.body);
     
@@ -83,7 +83,7 @@ app.get("/blogs/:id/edit", function(req, res) {
 });
 
 // UPDATE ROUTE
-app.put("/blogs/:id", function(req, res) {
+app.put("/blogs/:id", isSafe, function(req, res) {
     req.body.blog.body = req.sanitize(req.body.blog.body);
     
     Blog.findByIdAndUpdate(req.params.id, req.body.blog, function(err, updatedBlog) {
@@ -106,6 +106,15 @@ app.delete("/blogs/:id", function(req, res) {
         }
     });
 });
+
+function isSafe(req, res, next) {
+    if (req.body.image.match(/^https:\/\/images\.unsplash\.com\/.*/)) {
+      next();
+    } else {
+      req.flash("error", "Only images from images.unsplash.com allowed.");
+      res.redirect("back");
+    }
+}
 
 // LISTEN
 app.listen(process.env.PORT, process.env.IP, function(){
