@@ -108,10 +108,10 @@ app.delete("/blogs/:id", function(req, res) {
 });
 
 function isSafe(req, res, next) {
-    if (req.body.image.match(/^https:\/\/images\.unsplash\.com\/.*/)) {
+    if (req.body.blog.image.match(/^https:\/\/images\.unsplash\.com\/.*/)) {
       next();
     } else {
-      req.flash("error", "Only images from images.unsplash.com allowed.");
+    //   req.flash("error", "Only images from images.unsplash.com allowed.");
       res.redirect("back");
     }
 }
